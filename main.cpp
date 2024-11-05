@@ -4,18 +4,15 @@
 #include <raymath.h>
 #include <cmath>
 
-static float ScreenWidth = 1920;
-static float ScreenHeight = 1200;
+static float ScreenWidth = 1280;
+static float ScreenHeight = 800;
 static float DefaultRotation = 30;
-
-// Implicit, sprite-ul face un unghi de 30 de grade
-// cu verticala
-
-static float Multiplier = 2.f; // de variabila asta depinde factorul de multiplicare al tuturor variatilor
 //
+// Implicit, sprite-ul face un unghi de 30 de grade la stanga fata de verticala
+
+static float Multiplier = 2.f; // de variabila asta depinde factorul de multiplicare al tuturor variatiilor
 
 //Inceput implementare clasa singleton pentru a nu a mai tine parametrii impliciti ca variabile globale
-
 
 class DefaultParameters
 {
@@ -52,41 +49,41 @@ enum { MENU, SETTINGS, PLAYING, PAUSE, SHUTDOWN };
 class Projectile
 {
 private:
-  unsigned ProjectyleType;
-  unsigned ProjectyleSpeed;
+  unsigned ProjectileType;
+  unsigned ProjectileSpeed;
   unsigned ProjectileDamage;
   Vector2 ProjectilePosition;
 
 public:
   Projectile() = default;
 
-  Projectile(unsigned projectyle_type,
-             unsigned projectyle_speed,
-             unsigned projectile_damage,
-             const Vector2& projectile_position)
-    : ProjectyleType(projectyle_type)
-    , ProjectyleSpeed(projectyle_speed)
-    , ProjectileDamage(projectile_damage)
-    , ProjectilePosition(projectile_position)
+  Projectile(unsigned ProjectileType,
+             unsigned ProjectileSpeed,
+             unsigned ProjectileDamage,
+             const Vector2& ProjectilePosition)
+    : ProjectileType( ProjectileType)
+      , ProjectileSpeed( ProjectileSpeed)
+      , ProjectileDamage( ProjectileDamage)
+      , ProjectilePosition( ProjectilePosition)
   {
-    std::cout << "S-a creat proiectilul " << this->ProjectyleType << '\n';
+    std::cout << "S-a creat proiectilul " << this->ProjectileType << '\n';
   }
 
   Projectile(const Projectile& other)
-    : ProjectyleType(other.ProjectyleType)
-    , ProjectyleSpeed(other.ProjectyleSpeed)
-    , ProjectileDamage(other.ProjectileDamage)
-    , ProjectilePosition(other.ProjectilePosition)
+    : ProjectileType( other .ProjectileType)
+      , ProjectileSpeed( other .ProjectileSpeed)
+      , ProjectileDamage(other.ProjectileDamage)
+      , ProjectilePosition(other.ProjectilePosition)
   {
-    std::cout << "S-a copiat proiectilul " << this->ProjectyleType << '\n';
+    std::cout << "S-a copiat proiectilul " << this->ProjectileType << '\n';
   }
 
   Projectile& operator=(const Projectile& other)
   {
     if (this == &other)
       return *this;
-    ProjectyleType = other.ProjectyleType;
-    ProjectyleSpeed = other.ProjectyleSpeed;
+    ProjectileType = other .ProjectileType;
+    ProjectileSpeed = other .ProjectileSpeed;
     ProjectileDamage = other.ProjectileDamage;
     ProjectilePosition = other.ProjectilePosition;
     return *this;
@@ -94,8 +91,8 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const Projectile& obj)
   {
-    return os << "ProjectyleType: " << obj.ProjectyleType
-              << "\nProjectyleSpeed: " << obj.ProjectyleSpeed
+    return os << "ProjectileType: " << obj.ProjectileType
+              << "\nProjectyleSpeed: " << obj.ProjectileSpeed
               << "\nProjectileDamage: " << obj.ProjectileDamage
               << "\nProjectilePosition.x: " << obj.ProjectilePosition.x
               << "\nProjectilePosition.y: " << obj.ProjectilePosition.y << '\n';
@@ -109,7 +106,7 @@ class Player
 private:
   std::string PlayerName;
   short PlayerLevel;
-  short PlayerLive;
+  short PlayerLives;
   float Rotation;
   Vector2 PlayerPosition;
   float Radius;
@@ -118,20 +115,20 @@ private:
 public:
   Player() = default;
 
-  Player(const std::string& player_name,
-         short player_level,
-         short player_live,
-         float rotation,
-         const Vector2& player_position,
-         float radius,
-         int sides)
-    : PlayerName(player_name)
-    , PlayerLevel(player_level)
-    , PlayerLive(player_live)
-    , Rotation(rotation)
-    , PlayerPosition(player_position)
-    , Radius(radius)
-    , Sides(sides)
+  Player(const std::string& PlayerName,
+         short PlayerLevel,
+         short PlayerLives,
+         float Rotation,
+         const Vector2& PlayerPosition,
+         float Radius,
+         int Sides)
+    : PlayerName( PlayerName)
+    , PlayerLevel( PlayerLevel)
+    , PlayerLives( PlayerLives)
+    , Rotation( Rotation)
+    , PlayerPosition( PlayerPosition)
+    , Radius( Radius)
+    , Sides( Sides)
   {
     std::cout << "A fost creat jucatorul " << this->PlayerName << '\n';
   }
@@ -139,7 +136,7 @@ public:
   Player(const Player& other)
     : PlayerName{ other.PlayerName }
     , PlayerLevel{ other.PlayerLevel }
-    , PlayerLive{ other.PlayerLive }
+    , PlayerLives{ other .PlayerLives }
     , Rotation{ other.Rotation }
     , PlayerPosition{ other.PlayerPosition }
     , Radius{ other.Radius }
@@ -154,7 +151,7 @@ public:
       return *this;
     PlayerName = other.PlayerName;
     PlayerLevel = other.PlayerLevel;
-    PlayerLive = other.PlayerLive;
+    PlayerLives = other .PlayerLives;
     Rotation = other.Rotation;
     PlayerPosition = other.PlayerPosition;
     Radius = other.Radius;
@@ -166,7 +163,7 @@ public:
   {
     return os << "PlayerName: " << obj.PlayerName << '\n'
               << " PlayerLevel: " << obj.PlayerLevel << '\n'
-              << " PlayerLive: " << obj.PlayerLive << '\n'
+              << " PlayerLives: " << obj.PlayerLives << '\n'
               << " Rotation: " << obj.Rotation << '\n'
               << " PlayerPosition: " << obj.PlayerPosition.x << ' '
               << obj.PlayerPosition.y << '\n'
@@ -290,14 +287,14 @@ private:
 public:
   Enemy() = default;
 
-  Enemy(const std::string& enemy_name,
-        short health_points,
-        short enemy_level,
-        short enemy_speed)
-    : EnemyName(enemy_name)
-    , HealthPoints(health_points)
-    , EnemyLevel(enemy_level)
-    , EnemySpeed(enemy_speed)
+  Enemy(const std::string& EnemyName,
+        short HealthPoints,
+        short EnemyLevel,
+        short EnemySpeed)
+    : EnemyName( EnemyName)
+    , HealthPoints( HealthPoints)
+    , EnemyLevel( EnemyLevel)
+    , EnemySpeed( EnemySpeed)
   {
     std::cout << "Inamicul " << this->EnemyName << " a fost creat\n";
   }
@@ -352,19 +349,24 @@ public:
     return os << "state: " << obj.state;
   }
 
-  static void RunApp(Player);
+  static void RunApp(Player&);
 
   ~Menu() { std::cout << "Gata cu fotosinteza, la culcare toata lumea!\n"; };
 };
 
 void
-Menu::RunApp(Player player)
+Menu::RunApp(Player& player)
 {
+  SetConfigFlags (FLAG_WINDOW_RESIZABLE);
   InitWindow(ScreenWidth, ScreenHeight, "Project Asteroid");
   SetTargetFPS(60);
   HideCursor();
 
   while (!WindowShouldClose()) {
+    
+    ScreenWidth=(float)GetScreenWidth();
+    ScreenHeight=(float)GetScreenHeight();
+    
     BeginDrawing();
     ClearBackground(BLACK);
 
@@ -390,9 +392,9 @@ main()
 
   std::cout << p1;
 
-  Menu meniu(1);
+  Menu Meniu(1);
 
-  meniu.RunApp(p1);
+  Meniu.RunApp(p1);
 
   Player* p2 = &p1;
 

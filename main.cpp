@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <cmath>
+#include <utility>
 
 static float ScreenWidth = 1920;
 static float ScreenHeight = 1200;
@@ -11,7 +12,7 @@ static float DefaultRotation = 30;
 // Implicit, sprite-ul face un unghi de 30 de grade
 // cu verticala
 
-static float Multiplier = 2.f; // de variabila asta depinde factorul de multiplicare al tuturor variatilor
+static float Multiplier = 2.F; // de variabila asta depinde factorul de multiplicare al tuturor variatilor
 //
 
 //Inceput implementare clasa singleton pentru a nu a mai tine parametrii impliciti ca variabile globale
@@ -52,41 +53,41 @@ enum { MENU, SETTINGS, PLAYING, PAUSE, SHUTDOWN };
 class Projectile
 {
 private:
-  unsigned ProjectyleType;
-  unsigned ProjectyleSpeed;
+  unsigned ProjectileType;
+  unsigned ProjectileSpeed;
   unsigned ProjectileDamage;
   Vector2 ProjectilePosition;
 
 public:
   Projectile() = default;
 
-  Projectile(unsigned projectyle_type,
-             unsigned projectyle_speed,
-             unsigned projectile_damage,
-             const Vector2& projectile_position)
-    : ProjectyleType(projectyle_type)
-    , ProjectyleSpeed(projectyle_speed)
-    , ProjectileDamage(projectile_damage)
-    , ProjectilePosition(projectile_position)
+  Projectile(unsigned ProjecileType,
+             unsigned ProjectyleSpeed,
+             unsigned ProjectileDamage,
+             const Vector2& ProjectilePosition)
+    : ProjectileType( ProjecileType)
+      , ProjectileSpeed( ProjectyleSpeed)
+      , ProjectileDamage(ProjectileDamage)
+      , ProjectilePosition( ProjectilePosition)
   {
-    std::cout << "S-a creat proiectilul " << this->ProjectyleType << '\n';
+    std::cout << "S-a creat proiectilul " << this->ProjectileType << '\n';
   }
 
   Projectile(const Projectile& other)
-    : ProjectyleType(other.ProjectyleType)
-    , ProjectyleSpeed(other.ProjectyleSpeed)
-    , ProjectileDamage(other.ProjectileDamage)
-    , ProjectilePosition(other.ProjectilePosition)
+    : ProjectileType( other .ProjectileType)
+      , ProjectileSpeed( other .ProjectileSpeed)
+      , ProjectileDamage(other.ProjectileDamage)
+      , ProjectilePosition(other.ProjectilePosition)
   {
-    std::cout << "S-a copiat proiectilul " << this->ProjectyleType << '\n';
+    std::cout << "S-a copiat proiectilul " << this->ProjectileType << '\n';
   }
 
   Projectile& operator=(const Projectile& other)
   {
     if (this == &other)
       return *this;
-    ProjectyleType = other.ProjectyleType;
-    ProjectyleSpeed = other.ProjectyleSpeed;
+    ProjectileType = other .ProjectileType;
+    ProjectileSpeed = other .ProjectileSpeed;
     ProjectileDamage = other.ProjectileDamage;
     ProjectilePosition = other.ProjectilePosition;
     return *this;
@@ -94,8 +95,8 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const Projectile& obj)
   {
-    return os << "ProjectyleType: " << obj.ProjectyleType
-              << "\nProjectyleSpeed: " << obj.ProjectyleSpeed
+    return os << "ProjectileType: " << obj.ProjectileType
+              << "\nProjectyleSpeed: " << obj.ProjectileSpeed
               << "\nProjectileDamage: " << obj.ProjectileDamage
               << "\nProjectilePosition.x: " << obj.ProjectilePosition.x
               << "\nProjectilePosition.y: " << obj.ProjectilePosition.y << '\n';
@@ -118,14 +119,14 @@ private:
 public:
   Player() = default;
 
-  Player(const std::string& player_name,
+  Player(std::string  player_name,
          short player_level,
          short player_live,
          float rotation,
          const Vector2& player_position,
          float radius,
          int sides)
-    : PlayerName(player_name)
+    : PlayerName(std::move(player_name))
     , PlayerLevel(player_level)
     , PlayerLive(player_live)
     , Rotation(rotation)
@@ -180,101 +181,97 @@ public:
 
   void Update();
 
-  Vector2 GetPos() const;
+  [[nodiscard]] Vector2 GetPos() const;
 
   void ShowPos() const;
 };
 
 
 void
-Player::Draw() const
-{
-  DrawPolyLinesEx(
-    this->PlayerPosition, this->Sides, this->Radius, this->Rotation, 2, RED);
+Player::Draw() const {
+  DrawPolyLinesEx (
+    this -> PlayerPosition , this -> Sides , this -> Radius , this -> Rotation , 2 , RED );
 }
 
 void
-Player::Update()
-{
-  bool rotated = 0; // cand playerul se misca inainte sau inapoi, daca nu se
-                    // previne intrarea
+Player::Update() {
+  bool Rotated = 0; // cand playerul se misca inainte sau inapoi, daca nu se
+  // previne intrarea
   // in ultima pereche de checkuri pentru rotatie, aceasta se va face de 2 ori
   // deci jucatorul se va roti de 2 ori mai mult daca se misca inainte-inapoi
   // (ar merge lasat feature si nu bug???? hmmmmm...)
   // de aia exista bool-ul asta
-  if (IsKeyDown(KEY_UP)) {
-    this->PlayerPosition.x +=
-      cos((this->Rotation - 120) * DEG2RAD) * 1.5 * Multiplier;
-    this->PlayerPosition.y +=
-      sin((this->Rotation - 120) * DEG2RAD) * 1.5 * Multiplier;
-
-    if (IsKeyDown(KEY_RIGHT)) {
-      this->Rotation += 2 * Multiplier;
-      rotated = true;
+  if( IsKeyDown ( KEY_UP ) ) {
+    this -> PlayerPosition . x +=
+      cos ( (this -> Rotation - 120) * DEG2RAD ) * 1.5 * Multiplier;
+    this -> PlayerPosition . y +=
+      sin ( (this -> Rotation - 120) * DEG2RAD ) * 1.5 * Multiplier;
+    //
+    //if( IsKeyDown ( KEY_RIGHT ) ) {
+    //  this -> Rotation += 2 * Multiplier;
+    //  Rotated = true;
+    //}
+    //if( IsKeyDown ( KEY_LEFT ) ) {
+    //  this -> Rotation -= 2 * Multiplier;
+    //  Rotated = true;
+    //}
+  }
+  if( IsKeyDown ( KEY_DOWN ) ) {
+    this -> PlayerPosition . x -=
+      cos ( (this -> Rotation - 120) * DEG2RAD ) * 1.5 * Multiplier;
+    this -> PlayerPosition . y -=
+      sin ( (this -> Rotation - 120) * DEG2RAD ) * 1.5 * Multiplier;
+    
+    if( IsKeyDown ( KEY_RIGHT ) ) {
+      this -> Rotation -= 2 * Multiplier;
+      Rotated = true;
     }
-    if (IsKeyDown(KEY_LEFT)) {
-      this->Rotation -= 2 * Multiplier;
-      rotated = true;
+    if( IsKeyDown ( KEY_LEFT ) ) {
+      this -> Rotation += 2 * Multiplier;
+      Rotated = true;
     }
   }
-  if (IsKeyDown(KEY_DOWN)) {
-    this->PlayerPosition.x -=
-      cos((this->Rotation - 120) * DEG2RAD) * 1.5 * Multiplier;
-    this->PlayerPosition.y -=
-      sin((this->Rotation - 120) * DEG2RAD) * 1.5 * Multiplier;
-
-    if (IsKeyDown(KEY_RIGHT)) {
-      this->Rotation -= 2 * Multiplier;
-      rotated = true;
+  
+  if( !Rotated ) {
+    if( IsKeyDown ( KEY_RIGHT ) ) {
+      this -> Rotation += 2 * Multiplier;
     }
-    if (IsKeyDown(KEY_LEFT)) {
-      this->Rotation += 2 * Multiplier;
-      rotated = true;
+    if( IsKeyDown ( KEY_LEFT ) ) {
+      this -> Rotation -= 2 * Multiplier;
     }
   }
-
-  if (!rotated) {
-    if (IsKeyDown(KEY_RIGHT)) {
-      this->Rotation += 2 * Multiplier;
-    }
-    if (IsKeyDown(KEY_LEFT)) {
-      this->Rotation -= 2 * Multiplier;
-    }
-  }
-
-  if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE)) {
-    Projectile p1(1, 10, 10, this->PlayerPosition);
+  
+  if( IsKeyPressed ( KEY_ENTER ) || IsKeyPressed ( KEY_SPACE ) ) {
+    Projectile p1 ( 1 , 10 , 10 , this -> PlayerPosition );
     std::cout << "\n\n\n--Trage--\n\n\n";
   }
-
+  
   // pentru ca jucatorul sa nu iasa din fereastra
   // trebuie impuse limite superioare/inferioare pentru unde poate ajunge
   // caracterul
-
-  if (this->PlayerPosition.x < Radius / 2.)
-    this->PlayerPosition.x = Radius / 2.;
-  if (this->PlayerPosition.x > ScreenWidth - Radius / 2.)
-    this->PlayerPosition.x = ScreenWidth - Radius / 2.;
-  if (this->PlayerPosition.y < Radius / 2.)
-    this->PlayerPosition.y = Radius / 2.;
-  if (this->PlayerPosition.y > ScreenHeight - Radius / 2.)
-    this->PlayerPosition.y = ScreenHeight - Radius / 2.;
-
-  this->Draw();
-  this->ShowPos();
+  
+  if( this -> PlayerPosition . x < Radius / 2. )
+    this -> PlayerPosition . x = Radius / 2.F;
+  if( this -> PlayerPosition . x > ScreenWidth - Radius / 2. )
+    this -> PlayerPosition . x = ScreenWidth - Radius / 2.F;
+  if( this -> PlayerPosition . y < Radius / 2. )
+    this -> PlayerPosition . y = Radius / 2.F;
+  if( this -> PlayerPosition . y > ScreenHeight - Radius / 2.F )
+    this -> PlayerPosition . y = ScreenHeight - Radius / 2.F;
+  
+  this -> Draw ();
+  this -> ShowPos ();
 }
 
 void
-Player::ShowPos() const
-{
-  std::cout << "Pozitie: " << this->PlayerPosition.x << ' '
-            << this->PlayerPosition.y << '\n';
+Player::ShowPos() const {
+  std::cout << "Pozitie: " << this -> PlayerPosition . x << ' '
+            << this -> PlayerPosition . y << '\n';
 }
 
 Vector2
-Player::GetPos() const
-{
-  return this->PlayerPosition;
+Player::GetPos() const {
+  return this -> PlayerPosition;
 }
 
 
@@ -289,14 +286,14 @@ private:
 public:
   Enemy() = default;
 
-  Enemy(const std::string& enemy_name,
-        short health_points,
-        short enemy_level,
-        short enemy_speed)
-    : EnemyName(enemy_name)
-    , HealthPoints(health_points)
-    , EnemyLevel(enemy_level)
-    , EnemySpeed(enemy_speed)
+  Enemy(std::string  EnemyName,
+        short HealthPoints,
+        short EnemyLevel,
+        short EnemySpeed)
+    : EnemyName(std::move( EnemyName))
+    , HealthPoints( HealthPoints)
+    , EnemyLevel( EnemyLevel)
+    , EnemySpeed( EnemySpeed)
   {
     std::cout << "Inamicul " << this->EnemyName << " a fost creat\n";
   }
@@ -340,7 +337,7 @@ private:
 public:
   Menu() = default;
 
-  Menu(char state)
+  explicit Menu(char state)
     : state(state)
   {
     std::cout << "S-a creat meniul " << this->state << '\n';
@@ -357,52 +354,74 @@ public:
 };
 
 void
-Menu::RunApp(Player player)
-{
-  InitWindow(ScreenWidth, ScreenHeight, "Project Asteroid");
-  SetTargetFPS(60);
-  HideCursor();
-
-  while (!WindowShouldClose()) {
-    BeginDrawing();
-    ClearBackground(BLACK);
-
-    player.Update(); // apel catre functia de update pentru player
-
-    EndDrawing();
+Menu::RunApp(Player player) {
+  InitWindow ( (int)ScreenWidth , (int)ScreenHeight , "Project Asteroid" );
+  SetTargetFPS ( 60 );
+  HideCursor ();
+  
+  
+  // inceputul buclei de joc
+  while ( !WindowShouldClose () ) {
+    
+    float TempWidth = ScreenWidth;
+    float TempHeight = ScreenHeight;
+    
+    if( IsKeyPressed ( KEY_ENTER ) && (IsKeyDown ( KEY_LEFT_ALT ) ||
+                                       IsKeyDown ( KEY_RIGHT_ALT )) ) {
+      int Display = GetCurrentMonitor ();
+      
+      if( IsWindowFullscreen () ) {
+        SetWindowSize ( (int)TempWidth , (int)TempHeight );
+        ScreenWidth = TempWidth;
+        ScreenHeight = TempHeight;
+      } else {
+        SetWindowSize ( GetMonitorWidth ( Display ) ,
+                        GetMonitorHeight ( Display ) );
+        ScreenWidth = (float)GetMonitorWidth ( Display );
+        ScreenHeight = (float)GetMonitorHeight ( Display );
+      }
+      
+      ToggleFullscreen ();
+    }
+    
+    BeginDrawing ();
+    ClearBackground ( BLACK );
+    
+    player . Update (); // apel catre functia de update pentru player
+    
+    EndDrawing ();
   }
-
-  CloseWindow();
+  
+  CloseWindow ();
 }
 
 int
-main()
-{
-
-  Player p1("Gigel",
-            1,
-            5,
-            DefaultRotation,
-            { ScreenWidth / 2.f, ScreenHeight / 2.f },
-            ScreenWidth / 60.,
-            3);
-
-  std::cout << p1;
-
-  Menu meniu(1);
-
-  meniu.RunApp(p1);
-
-  Player* p2 = &p1;
-
-  std::cout << p2;
-
-  Enemy e1("Dorel", 10, 2, 100);
-
-  std::cout << e1;
-
-  Projectile pr1(1, 10, 50, p1.GetPos());
-  std::cout << pr1;
+main() {
+  
+  Player P1 ( "Gigel" ,
+              1 ,
+              5 ,
+              DefaultRotation ,
+              { ScreenWidth / 2.F , ScreenHeight / 2.F } ,
+              ScreenWidth / 60.F ,
+              3 );
+  
+  std::cout << P1;
+  
+  Menu Meniu ( 1 );
+  
+  Meniu . RunApp ( P1 );
+  
+  Player *P2 = &P1;
+  
+  std::cout << P2;
+  
+  Enemy E1 ( "Dorel" , 10 , 2 , 100 );
+  
+  std::cout << E1;
+  
+  Projectile Pr1 ( 1 , 10 , 50 , P1 . GetPos () );
+  std::cout << Pr1;
 }
 
 
